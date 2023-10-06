@@ -121,65 +121,9 @@ public class CardHandler extends Handler implements CardReaderObserver {
 		String type = data.getType().toLowerCase().strip();
 
 		if (type.equals("membership")) {
-			String memberID = data.getNumber();
-			boolean isMember = Membership.isMember(memberID);
-
-			if (!isMember) {
-				this.scSoftware.notifyObservers(observer -> observer.invalidMembershipCardDetected());
-				return;
-			}
-
-			this.customer.setMemberID(memberID);
-			this.scSoftware.notifyObservers(observer -> observer.membershipCardDetected(memberID));
-		} else if (type.equals("debit") || type.equals("credit")) {
-			String cardNumber = data.getNumber();
-
-			CardIssuer issuer = Bank.getCardIssuer(cardNumber);
-			int holdNumber = issuer.authorizeHold(cardNumber, this.customer.getCartSubtotal());
-
-			// Fail to hold the authorization
-			if (holdNumber == -1) {
-				this.scSoftware.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
-				return;
-			}
-
-			boolean posted = issuer.postTransaction(cardNumber, holdNumber, this.customer.getCartSubtotal());
-
-			// Fail to post transaction
-			if (!posted) {
-				this.scSoftware.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
-				return;
-			}
-
-			this.scSoftware.paymentCompleted(); // Transaction is complete, go to idle state
-			this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
-		} else if (type.equals("gift")) {
-			if (GiftCard.isGiftCard(data.getNumber())) {
-				String cardNumber = data.getNumber();
-				CardIssuer issuer = GiftCard.getCardIssuer();
-				int holdNumber = issuer.authorizeHold(cardNumber, this.customer.getCartSubtotal());
-
-				// Fail to hold the authorization
-				if (holdNumber == -1) {
-					this.scSoftware.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
-					return;
-				}
-
-				boolean posted = issuer.postTransaction(cardNumber, holdNumber, this.customer.getCartSubtotal());
-
-				// Fail to post transaction
-				if (!posted) {
-					this.scSoftware.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
-					return;
-				}
-				this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
-				return;
-			} else {
-				this.scSoftware.notifyObservers(observer -> observer.invalidGiftCardDetected());
-			}
-
-			this.scSoftware.paymentCompleted(); // Transaction is complete, go to idle state
-			this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
+			this.processMembership(reader, data);
+		} else if (type.equals("debit") || type.equals("credit") || type.equals("gift")) {
+			this.processPayment(reader, data, type);
 		} else {
 			this.scSoftware.notifyObservers(observer -> observer.invalidCardTypeDetected());
 		}
@@ -188,5 +132,53 @@ public class CardHandler extends Handler implements CardReaderObserver {
 		this.scStation.cardReader.enable();
 
 		// Variables will be reset after when the next customer is binded.
+	}
+	
+	private void processMembership(CardReader reader, CardData data) {
+		String memberID = data.getNumber();
+		boolean isMember = Membership.isMember(memberID);
+
+		if (!isMember) {
+			this.scSoftware.notifyObservers(observer -> observer.invalidMembershipCardDetected());
+			return;
+		}
+
+		this.customer.setMemberID(memberID);
+		this.scSoftware.notifyObservers(observer -> observer.membershipCardDetected(memberID));
+	}
+	
+	private void processPayment(CardReader reader, CardData data, String type) {
+		String cardNumber = data.getNumber();
+		CardIssuer issuer = null;
+		if (type.equals("gift")) {
+			if (GiftCard.isGiftCard(data.getNumber())) {
+				issuer = GiftCard.getCardIssuer();
+			} else {
+				this.scSoftware.notifyObservers(observer -> observer.invalidGiftCardDetected());
+				this.scSoftware.paymentCompleted();
+				return;
+			}
+		} else if (type.equals("debit") || type.equals("credit")) {
+			issuer = Bank.getCardIssuer(cardNumber);
+		}
+		
+		int holdNumber = issuer.authorizeHold(cardNumber, this.customer.getCartSubtotal());
+
+		// Fail to hold the authorization
+		if (holdNumber == -1) {
+			this.scSoftware.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
+			return;
+		}
+
+		boolean posted = issuer.postTransaction(cardNumber, holdNumber, this.customer.getCartSubtotal());
+
+		// Fail to post transaction
+		if (!posted) {
+			this.scSoftware.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
+			return;
+		}
+
+		this.scSoftware.paymentCompleted(); // Transaction is complete, go to idle state
+		this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
 	}
 }
