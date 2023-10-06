@@ -214,7 +214,7 @@ public class AppControl {
 		removeStationUserType(station, CUSTOMER);
 		for (int i = 0; i < users.length; i++) {
 			if (users[i] == activeUser) {
-				if (selfStationSoftwares.get(station-1).isShutdown()) {
+				if (selfStationSoftwares.get(station-1).getSelfCheckoutState().getIsShutDown()) {
 					
 				}else {
 					selfStationSoftwares.get(station - 1).removeUser(activeUser);
@@ -302,7 +302,7 @@ public class AppControl {
 			return "ITEM NOT BAGGED";
 		} else if (selfStationSoftwares.get(station).getPhase() == Phase.PLACING_OWN_BAG) {
 			return "USE OWN BAGS";
-		} else if (selfStationSoftwares.get(station).isShutdown()) {
+		} else if (selfStationSoftwares.get(station).getSelfCheckoutState().getIsShutDown()) {
 			return "STATION OFFLINE";
 		}else {
 			return "OKAY";

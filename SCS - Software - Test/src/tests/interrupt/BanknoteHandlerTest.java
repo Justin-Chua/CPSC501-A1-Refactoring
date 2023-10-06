@@ -164,7 +164,7 @@ public class BanknoteHandlerTest
     @Test
     public void banknoteRemovedFailTest()
     {
-        selfCheckoutSoftware.hasPendingChanges();
+        selfCheckoutSoftware.getSelfCheckoutController().getCheckout().hasPendingChange();
         banknoteHandler.banknoteRemoved(selfCheckoutStation.banknoteOutput);
     }
 

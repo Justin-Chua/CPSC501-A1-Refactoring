@@ -114,10 +114,10 @@ public class SelfCheckoutSoftwareTest
     @Test
     public void updatePaperAndInkUsedTest()
     {
-        selfCheckoutSoftware.getPaperUsed();
-        selfCheckoutSoftware.getInkUsed();
-        selfCheckoutSoftware.resetPaperUsed();
-        selfCheckoutSoftware.resetInkUsed();
+        selfCheckoutSoftware.getSelfCheckoutController().getReceipt().getPaperUsed();
+        selfCheckoutSoftware.getSelfCheckoutController().getReceipt().getInkUsed();
+        selfCheckoutSoftware.getSelfCheckoutController().getReceipt().resetPaperUsed();
+        selfCheckoutSoftware.getSelfCheckoutController().getReceipt().resetInkUsed();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -143,7 +143,7 @@ public class SelfCheckoutSoftwareTest
         assertTrue(selfCheckoutStation.scanningArea.isDisabled());
         assertTrue(selfCheckoutStation.baggingArea.isDisabled());
 
-        selfCheckoutSoftware.enableHardware();
+        selfCheckoutSoftware.getSelfCheckoutHandler().enableAll();
 
         assertFalse(selfCheckoutStation.banknoteInput.isDisabled());
         assertFalse(selfCheckoutStation.banknoteOutput.isDisabled());
@@ -159,7 +159,7 @@ public class SelfCheckoutSoftwareTest
         assertFalse(selfCheckoutStation.scanningArea.isDisabled());
         assertFalse(selfCheckoutStation.baggingArea.isDisabled());
 
-        selfCheckoutSoftware.disableHardware();
+        selfCheckoutSoftware.getSelfCheckoutHandler().disableAll();
 
         assertTrue(selfCheckoutStation.banknoteInput.isDisabled());
         assertTrue(selfCheckoutStation.banknoteOutput.isDisabled());
@@ -229,7 +229,7 @@ public class SelfCheckoutSoftwareTest
     @Test
     public void blockSystemTest()
     {
-        selfCheckoutSoftware.enableHardware();
+        selfCheckoutSoftware.getSelfCheckoutHandler().enableAll();
         selfCheckoutSoftware.blockSystem();
 
         assertTrue(selfCheckoutStation.banknoteInput.isDisabled());
@@ -268,7 +268,7 @@ public class SelfCheckoutSoftwareTest
     @Test
     public void hasPendingChangesTest()
     {
-        assertFalse(selfCheckoutSoftware.hasPendingChanges());
+        assertFalse(selfCheckoutSoftware.getSelfCheckoutController().getCheckout().hasPendingChange());
     }
 
     @Test
@@ -502,20 +502,20 @@ public class SelfCheckoutSoftwareTest
     @Test
     public void setAndGetBanknoteDanglingTest()
     {
-        assertFalse(selfCheckoutSoftware.getBanknoteDangling());
+        assertFalse(selfCheckoutSoftware.getSelfCheckoutState().getBanknoteDangling());
 
-        selfCheckoutSoftware.setBanknoteDangling(true);
+        selfCheckoutSoftware.getSelfCheckoutState().setBanknoteDangling(true);
 
-        assertTrue(selfCheckoutSoftware.getBanknoteDangling());
+        assertTrue(selfCheckoutSoftware.getSelfCheckoutState().getBanknoteDangling());
     }
 
     @Test
     public void setAndGetCoinInTrayTest()
     {
-        assertFalse(selfCheckoutSoftware.getCoinInTray());
+        assertFalse(selfCheckoutSoftware.getSelfCheckoutState().getCoinInTray());
 
-        selfCheckoutSoftware.setCoinInTray(true);
+        selfCheckoutSoftware.getSelfCheckoutState().setCoinInTray(true);
 
-        assertTrue(selfCheckoutSoftware.getCoinInTray());
+        assertTrue(selfCheckoutSoftware.getSelfCheckoutState().getCoinInTray());
     }
 }

@@ -176,8 +176,8 @@ public class GUI {
 		if (ac.getActiveUser().getUserType() == AppControl.CUSTOMER
 				&& (scss.getPhase() == Phase.PAYMENT_COMPLETE || scss.getPhase() == Phase.PROCESSING_PAYMENT)
 				&& !(scs.banknoteOutput.hasSpace())) {
-			if (scss.getBanknoteDangling()) {
-				scss.setBanknoteDangling(false);
+			if (scss.getSelfCheckoutState().getBanknoteDangling()) {
+				scss.getSelfCheckoutState().setBanknoteDangling(false);
 				scs.banknoteOutput.removeDanglingBanknotes();
 				System.out.println("bill taken"); // TODO
 			}
@@ -222,9 +222,9 @@ public class GUI {
 		SelfCheckoutStation scs = scss.getSelfCheckoutStation();
 		if (ac.getActiveUser().getUserType() == AppControl.CUSTOMER &&
 				scss.getPhase() == Phase.PAYMENT_COMPLETE) {
-			if (scss.getCoinInTray()) {
+			if (scss.getSelfCheckoutState().getCoinInTray()) {
 				scs.coinTray.collectCoins();
-				scss.setCoinInTray(false);
+				scss.getSelfCheckoutState().setCoinInTray(false);
 				System.out.println("Coins taken");
 			}
 		}
@@ -459,12 +459,12 @@ public class GUI {
 			SelfCheckoutSoftware scss = ac.getSelfCheckoutSoftware(currentStation);
 			SelfCheckoutStation scs = scss.getSelfCheckoutStation();
 			try {
-				if (scss.getPaperUsed() == 0) {
+				if (scss.getSelfCheckoutController().getReceipt().getPaperUsed() == 0) {
 					Scenes.errorMsg("The paper cartridge is already full");
 				} else {
 					// refill the printer to max capacity
-					scs.printer.addPaper(scss.getPaperUsed());
-					scss.resetPaperUsed();
+					scs.printer.addPaper(scss.getSelfCheckoutController().getReceipt().getPaperUsed());
+					scss.getSelfCheckoutController().getReceipt().resetPaperUsed();
 				}
 			} catch (OverloadException e) {
 				// overload exception should never be thrown
@@ -477,11 +477,11 @@ public class GUI {
 			SelfCheckoutSoftware scss = ac.getSelfCheckoutSoftware(currentStation);
 			SelfCheckoutStation scs = scss.getSelfCheckoutStation();
 			try {
-				if (scss.getInkUsed() == 0) {
+				if (scss.getSelfCheckoutController().getReceipt().getInkUsed() == 0) {
 					Scenes.errorMsg("The ink cartridge is already full");
 				} else {
-					scs.printer.addInk(scss.getInkUsed());
-					scss.resetInkUsed();
+					scs.printer.addInk(scss.getSelfCheckoutController().getReceipt().getInkUsed());
+					scss.getSelfCheckoutController().getReceipt().resetInkUsed();
 				}
 			} catch (OverloadException e) {
 				// overload exception should never be thrown
