@@ -173,6 +173,27 @@ public class Checkout {
 		// New pending changes list
 		List<Cash> newPendingChanges = new ArrayList<Cash>(this.pendingChanges);
 		
+		this.dispenseChange(newPendingChanges);
+		
+		this.pendingChanges = new ArrayList<Cash>(newPendingChanges);
+
+		// If size does not change, meaning no change is successfully emmited for
+		// customer, encounters error, notify attendant
+		if (size <= newPendingChanges.size()) {
+			this.scSoftware.errorOccur();
+			this.scSoftware.getSupervisionSoftware()
+					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scSoftware));
+			return;
+		}
+
+		// If the last one is dispensed, to next phase
+		if (this.pendingChanges.isEmpty()) {
+			this.scSoftware.paymentCompleted();
+			return;
+		}
+	}
+	
+	private void dispenseChange(List<Cash> newPendingChanges) {
 		// There's change pending to be returned to customer
 		// start emitting change to slot devices
 		for (Cash cash : this.pendingChanges) {
@@ -193,23 +214,6 @@ public class Checkout {
 					continue;
 				}
 			}
-		}
-
-		this.pendingChanges = new ArrayList<Cash>(newPendingChanges);
-
-		// If size does not change, meaning no change is successfully emmited for
-		// customer, encounters error, notify attendant
-		if (size <= newPendingChanges.size()) {
-			this.scSoftware.errorOccur();
-			this.scSoftware.getSupervisionSoftware()
-					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scSoftware));
-			return;
-		}
-
-		// If the last one is dispensed, to next phase
-		if (this.pendingChanges.isEmpty()) {
-			this.scSoftware.paymentCompleted();
-			return;
 		}
 	}
 
