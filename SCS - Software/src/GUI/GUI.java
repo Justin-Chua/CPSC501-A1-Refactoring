@@ -27,7 +27,6 @@ import software.SupervisionSoftware;
 import store.Inventory;
 import store.Membership;
 import store.Store;
-import store.credentials.AuthorizationRequiredException;
 
 import user.Customer;
 import user.User;
@@ -335,7 +334,7 @@ public class GUI {
 		try {
 			Store.getSupervisionSoftware().startUpStation(ac.getSelfCheckoutSoftware(station));
 			System.out.println("System started");
-		} catch (AuthorizationRequiredException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -604,7 +603,7 @@ public class GUI {
 		ac.removeItemFromCustomersCart(station, index);
 	}
 
-	public static void shutdownStation(int stationNumber) throws AuthorizationRequiredException {
+	public static void shutdownStation(int stationNumber) throws Exception {
 		Store.getSupervisionSoftware().shutDownStation(ac.getSelfCheckoutSoftware(stationNumber));
 		System.out.println("System stopped");
 

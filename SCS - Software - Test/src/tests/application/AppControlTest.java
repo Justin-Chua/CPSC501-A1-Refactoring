@@ -29,8 +29,6 @@ import software.SupervisionSoftware;
 import software.SelfCheckoutSoftware.Phase;
 import store.Inventory;
 import store.Store;
-import store.credentials.IncorrectCredentialException;
-import store.credentials.AuthorizationRequiredException;
 import user.Attendant;
 import user.Customer;
 import user.User;
@@ -232,7 +230,7 @@ public class AppControlTest {
 	public void testToggleBlock() {
 		try {
 			ac.getSupervisorSoftware().login("a","a");
-		} catch (IncorrectCredentialException e) {}
+		} catch (Exception e) {}
 		ac.toggleBlock(1);
 		assertTrue(ac.getStationPhase(1) == Phase.BLOCKING);
 		ac.toggleBlock(1);
@@ -245,7 +243,7 @@ public class AppControlTest {
 	public void testApproveStationDiscrepancyWeight() {
 		try {
 			ac.getSupervisorSoftware().login("a","a");
-		} catch (IncorrectCredentialException e) {}
+		} catch (Exception e) {}
 		ac.getSelfStationSoftwares().get(1).weightDiscrepancy();
 		assertTrue(ac.getStationPhase(1) == Phase.HAVING_WEIGHT_DISCREPANCY);
 		ac.approveStationDiscrepancy(1);
@@ -257,7 +255,7 @@ public class AppControlTest {
 	public void testApproveStationDiscrepancyNotBaggable() {
 		try {
 			ac.getSupervisorSoftware().login("a","a");
-		} catch (IncorrectCredentialException e) {}
+		} catch (Exception e) {}
 		ac.getSelfStationSoftwares().get(1).addItem();
 		ac.getSelfStationSoftwares().get(1).bagItem();
 		ac.getSelfStationSoftwares().get(1).notBaggingItem();

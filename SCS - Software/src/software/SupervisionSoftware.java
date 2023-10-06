@@ -7,9 +7,7 @@ import org.lsmr.selfcheckout.devices.SupervisionStation;
 
 import application.Main.Tangibles;
 import store.Store;
-import store.credentials.AuthorizationRequiredException;
 import store.credentials.CredentialsSystem;
-import store.credentials.IncorrectCredentialException;
 import user.Attendant;
 import software.observers.SupervisionObserver;
 
@@ -90,7 +88,7 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * @param password provided from the user via gui
 	 * @throws IncorrectCredentialException
 	 */
-	public void login(String username, String password) throws IncorrectCredentialException {
+	public void login(String username, String password) throws Exception {
 		if(CredentialsSystem.checkLogin(username, password)) {
 			Tangibles.ATTENDANTS.forEach(attendant -> {
 				if (attendant.getUsername().equals(username) && attendant.getPassword().equals(password)) {
@@ -100,7 +98,7 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 				}
 			});
 		} else {
-			throw new IncorrectCredentialException("Attendant credential is invalid");
+			throw new Exception("Attendant credential is invalid");
 		}
 	}
 	
@@ -134,11 +132,11 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 *         do
 	 *         because the hardware team should have it enabled?
 	 */
-	public void startUpStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void startUpStation(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.startSystem();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
@@ -149,11 +147,11 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * @return T/F - whether the checkoutStation has been removed. (If false
 	 *         the station most likely is not in the HashMap not exist)
 	 */
-	public void shutDownStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void shutDownStation(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.stopSystem();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
@@ -164,44 +162,44 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * @param scSoftware - the SelfCheckoutSoftware
 	 * @return T/F whether the station has been blocked.
 	 */
-	public void blockStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void blockStation(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.blockSystem();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
-	public void unblockStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void unblockStation(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.unblockSystem();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
-	public void approveWeightDiscrepancy(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void approveWeightDiscrepancy(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.approveWeightDiscrepancy();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
-	public void approveItemNotBaggable(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void approveItemNotBaggable(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.addItem();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 	
 
-	public void approveUseOfOwnBags(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
+	public void approveUseOfOwnBags(SelfCheckoutSoftware scSoftware) throws Exception {
 		if (this.logged_in) {
 			scSoftware.addItem();
 		} else {
-			throw new AuthorizationRequiredException("Atendant needs to log in");
+			throw new Exception("Atendant needs to log in");
 		}
 	}
 
@@ -216,14 +214,14 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * Should only be used when a full shut down is needed.
 	 * WARNING: Loses all SelfCheckoutSoftware
 	 * 
-	 * @throws AuthorizationRequiredException
+	 * @throws Exception
 	 */
-	public void shutdown() throws AuthorizationRequiredException {
+	public void shutdown() throws Exception {
 		if (this.logged_in) {
 			Store.setSupervisionSoftware(null);
 			this.clear();
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
@@ -231,16 +229,16 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * Restarts the Supervision Software while keeping the list of
 	 * SelfCheckoutSoftware
 	 * 
-	 * @throws AuthorizationRequiredException
+	 * @throws Exception
 	 */
-	public void restart() throws AuthorizationRequiredException {
+	public void restart() throws Exception {
 		if (this.logged_in) {
 			SupervisionSoftware scSoftware = new SupervisionSoftware(svs, softwareList);
 			for (SelfCheckoutSoftware software : softwareList)
 				software.setSupervisionSoftware(scSoftware);
 			Store.setSupervisionSoftware(scSoftware);
 		} else {
-			throw new AuthorizationRequiredException("Attendant needs to log in");
+			throw new Exception("Attendant needs to log in");
 		}
 	}
 
