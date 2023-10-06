@@ -212,8 +212,8 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 		// Customer removed a banknote from banknote output
 		// And Checkout keep making change to the customer in case there are pending
 		// banknote not returned to customer yet
-		if (slot.equals(this.scStation.banknoteOutput) && this.scSoftware.hasPendingChanges()) {
-			this.scSoftware.makeChange();
+		if (slot.equals(this.scStation.banknoteOutput) && this.scSoftware.getSelfCheckoutController().getCheckout().hasPendingChange()) {
+			this.scSoftware.getSelfCheckoutController().getCheckout().makeChange();
 		}
 	}
 

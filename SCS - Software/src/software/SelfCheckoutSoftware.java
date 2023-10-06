@@ -63,9 +63,36 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         this.phase = Phase.IDLE;
 
         this.startSystem();
-        this.disableHardware(); // Default by disable all of them
+        this.scHandler.disableAll(); // Default by disable all of them
+    }
+    
+    public SelfCheckoutStation getSelfCheckoutStation()
+    {
+        return this.scStation;
+    }
+    
+    public SelfCheckoutController getSelfCheckoutController() {
+    	return this.scController;
+    }
+    
+    public SelfCheckoutHandler getSelfCheckoutHandler() {
+    	return this.scHandler;
+    }
+    
+    public SelfCheckoutState getSelfCheckoutState() {
+    	return this.scState;
     }
 
+    public Customer getCustomer()
+    {
+        return this.customer;
+    }
+    
+    public Attendant getAttendant()
+    {
+        return this.attendant;
+    }
+    
     public void setUser(User user)
     {
         if (user instanceof Customer)
@@ -97,11 +124,6 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
 
     }
 
-    public Attendant getAttendant()
-    {
-        return this.attendant;
-    }
-
     public void removeUser(User user)
     {
         if (user instanceof Customer)
@@ -113,32 +135,6 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
             attendant = null;
             idle();
         }
-    }
-
-    public SelfCheckoutStation getSelfCheckoutStation()
-    {
-        return this.scStation;
-    }
-
-    public Customer getCustomer()
-    {
-        return this.customer;
-    }
-
-    public int getPaperUsed() {
-        return this.scController.getReceipt().getPaperUsed();
-    }
-
-    public void resetPaperUsed() {
-        this.scController.getReceipt().resetPaperUsed();
-    }
-
-    public int getInkUsed() {
-        return this.scController.getReceipt().getInkUsed();
-    }
-
-    public void resetInkUsed() {
-        this.scController.getReceipt().resetInkUsed();
     }
 
     /**
@@ -160,16 +156,6 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         return this.svs;
     }
 
-    public void enableHardware()
-    {
-    	this.scHandler.enableAll();
-    }
-
-    public void disableHardware()
-    {
-    	this.scHandler.disableAll();
-    }
-
     /**
      * This method is used for starting or restarting a system.
      * We do not want to mess with the SelfCheckoutStation because we do not create
@@ -184,7 +170,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
     	
     	this.scState = new SelfCheckoutState();
     	
-        this.enableHardware();
+        this.scHandler.enableAll();
         this.scController.getScreen().enableHardware();
 
         this.notifyObservers(observer -> observer.softwareStarted(this));
@@ -200,7 +186,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
      */
     public void stopSystem()
     {
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scController.getScreen().disableHardware();
 
         this.scHandler.resetHandlers();
@@ -221,7 +207,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         // 3. notify all observers that current phase is BLOCKING
         // 4. notify GUI that touch screen is blocked
 
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getProcessItemHandler().enableBaggingArea(); // Bagging area should be enabled basically all the time
         this.scState.setIsBlocked(true);
         this.notifyObservers(observer -> observer.phaseChanged(Phase.BLOCKING));
@@ -235,7 +221,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         // 3. notify all observers that current phase is the original phase
         // 4. notify GUI that touch screen is unblocked
 
-        this.enableHardware();
+        this.scHandler.enableAll();
         this.scState.setIsBlocked(false);
         this.notifyObservers(observer -> observer.phaseChanged(this.phase));
         this.notifyObservers(observer -> observer.touchScreenUnblocked());
@@ -273,10 +259,6 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         this.notifyObservers(observer -> observer.phaseChanged(this.phase));
         System.out.println("Set phase: " + this.phase);
     }
-    
-    public boolean isShutdown() {
-    	return this.scState.getIsShutDown();
-    }
 
     /**
      * When the checkout station has no customer using (for purchasing specifically)
@@ -306,7 +288,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
 
     public void addItem()
     {
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getCardHandler().enableHardware();
         this.scHandler.getProcessItemHandler().enableHardware();
 
@@ -314,7 +296,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
     }
 
     public void addPLUItem() {
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getCardHandler().enableHardware();
         this.scHandler.getProcessItemHandler().enableHardware();
 
@@ -337,7 +319,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
             throw new IllegalStateException("Cannot add item when the system is not scanning item");
         }
 
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getCardHandler().enableHardware();
         this.scHandler.getProcessItemHandler().enableBaggingArea();
 
@@ -358,7 +340,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         }
 
         // Only enable bagging area
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getCardHandler().enableHardware();
         this.scHandler.getProcessItemHandler().enableBaggingArea();
 
@@ -388,7 +370,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         }
 
         // keep hardware enabled so they can go back to adding products
-        this.enableHardware();
+        this.scHandler.enableAll();
         this.scHandler.getCardHandler().enableHardware();
         this.setPhase(Phase.CHOOSING_PAYMENT_METHOD);
     }
@@ -408,7 +390,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         this.setPhase(Phase.PROCESSING_PAYMENT);
 
         // Relative devices are enabled in checkout
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scController.getCheckout().enablePaymentHardware(method);
     }
 
@@ -418,7 +400,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         {
             throw new IllegalStateException("Cannot have a completed payment without a processed payment");
         }
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getProcessItemHandler().enableBaggingArea();
         this.scController.getReceipt().printReceipt();
         this.setPhase(Phase.PAYMENT_COMPLETE);
@@ -432,7 +414,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         }
 
         this.scHandler.getProcessItemHandler().resetScale();
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.idle();
     }
 
@@ -449,14 +431,14 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         }
 
         // Relative devices are disabled in checkout
-        this.disableHardware();
+        this.scHandler.disableAll();
 
         this.setPhase(Phase.SCANNING_ITEM);
     }
 
     public void weightDiscrepancy()
     {
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getProcessItemHandler().enableBaggingArea();
 
         this.scState.setIsWeightDiscrepancy(true);
@@ -479,34 +461,14 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         this.notifyObservers(observer -> observer.touchScreenUnblocked());
     }
 
-    public boolean hasPendingChanges() {
-        return this.scController.getCheckout().hasPendingChange();
-    }
-
     public void errorOccur()
     {
-        this.disableHardware();
+        this.scHandler.disableAll();
         this.scHandler.getProcessItemHandler().enableBaggingArea();
         this.scState.setIsError(true);
 
         this.notifyObservers(observer -> observer.phaseChanged(Phase.ERROR));
         this.notifyObservers(observer -> observer.touchScreenBlocked());
-    }
-
-    public void setCoinInTray(boolean coinInTray) {
-        this.scState.setCoinInTray(coinInTray);
-    }
-
-    public boolean getCoinInTray() {
-        return this.scState.getCoinInTray();
-    }
-
-    public void setBanknoteDangling(boolean banknoteDangling) {
-        this.scState.setBanknoteDangling(banknoteDangling);
-    }
-
-    public boolean getBanknoteDangling() {
-        return this.scState.getBanknoteDangling();
     }
 
     protected void resolveError() {

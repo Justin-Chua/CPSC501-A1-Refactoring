@@ -25,6 +25,7 @@ public class SelfCheckoutState {
     public void setIsBlocked(boolean status) {
     	this.isBlocked = status;
     }
+    
     public void setCoinInTray(boolean coinInTray) {
         this.coinInTray = coinInTray;
     }

@@ -180,7 +180,7 @@ public class Checkout {
 				try {
 					this.scStation.banknoteDispensers.get(cash.value.intValue()).emit();
 					newPendingChanges.remove(cash);
-					this.scSoftware.setBanknoteDangling(true);
+					this.scSoftware.getSelfCheckoutState().setBanknoteDangling(true);
 				} catch (EmptyException | DisabledException | OverloadException e) {
 					continue;
 				}
@@ -188,7 +188,7 @@ public class Checkout {
 				try {
 					this.scStation.coinDispensers.get(cash.value).emit();
 					newPendingChanges.remove(cash);
-					this.scSoftware.setCoinInTray(true);
+					this.scSoftware.getSelfCheckoutState().setCoinInTray(true);
 				} catch (OverloadException | EmptyException | DisabledException e) {
 					continue;
 				}
