@@ -317,7 +317,7 @@ public class AppControl {
 	 * @return
 	 */
 	public Phase getStationPhase(int station) {
-		return selfStationSoftwares.get(station - 1).getPhase();
+		return selfStationSoftwares.get(station).getPhase();
 	}
 
 	/**
