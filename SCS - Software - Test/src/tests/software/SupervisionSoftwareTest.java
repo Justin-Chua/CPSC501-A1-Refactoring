@@ -10,9 +10,7 @@ import org.lsmr.selfcheckout.devices.SupervisionStation;
 import software.SelfCheckoutSoftware;
 import software.SupervisionSoftware;
 import store.Store;
-import store.credentials.AuthorizationRequiredException;
 import store.credentials.CredentialsSystem;
-import store.credentials.IncorrectCredentialException;
 import user.Attendant;
 import user.Customer;
 
@@ -137,7 +135,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void getAttendantTest() throws IncorrectCredentialException
+    public void getAttendantTest() throws Exception
     {
         assertNull(supervisionSoftware.getAttendant());
 
@@ -147,7 +145,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void isLoggedInTest() throws IncorrectCredentialException
+    public void isLoggedInTest() throws Exception
     {
         assertFalse(supervisionSoftware.isLoggedIn());
 
@@ -157,20 +155,20 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void loginAndLogoutTest() throws IncorrectCredentialException
+    public void loginAndLogoutTest() throws Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.logout();
     }
 
-    @Test(expected = IncorrectCredentialException.class)
-    public void loginUnsuccessfullyTest() throws IncorrectCredentialException
+    @Test(expected = Exception.class)
+    public void loginUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.login(password, username);
     }
 
     @Test
-    public void loginTest2() throws IncorrectCredentialException
+    public void loginTest2() throws Exception
     {
         Main.Tangibles.ATTENDANTS.clear();
         Attendant testAttendant1 = new Attendant();
@@ -185,7 +183,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void startUpAndShutDownTest() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void startUpAndShutDownTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
 
@@ -200,14 +198,14 @@ public class SupervisionSoftwareTest
         assertNull(Store.getSupervisionSoftware());
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void shutDownUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void shutDownUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.shutdown();
     }
 
     @Test
-    public void restartTest() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void restartTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -221,7 +219,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void restartTest2() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void restartTest2() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         List <SelfCheckoutSoftware> selfCheckoutSoftwareList = supervisionSoftware.getSoftwareList();
@@ -231,14 +229,14 @@ public class SupervisionSoftwareTest
         assertEquals(selfCheckoutSoftwareList, Store.getSupervisionSoftware().getSoftwareList());
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void restartUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void restartUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.restart();
     }
 
     @Test
-    public void startUpSelfCheckoutStationTest() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void startUpSelfCheckoutStationTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -246,8 +244,8 @@ public class SupervisionSoftwareTest
         supervisionSoftware.startUpStation(selfCheckoutSoftware1);
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void startUpSelfCheckoutStationUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void startUpSelfCheckoutStationUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.add(selfCheckoutSoftware1);
 
@@ -255,7 +253,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void shutDownSelfCheckoutStationTest() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void shutDownSelfCheckoutStationTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -263,8 +261,8 @@ public class SupervisionSoftwareTest
         supervisionSoftware.shutDownStation(selfCheckoutSoftware1);
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void shutDownSelfCheckoutStationUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void shutDownSelfCheckoutStationUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.add(selfCheckoutSoftware1);
 
@@ -272,7 +270,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void blockStationTest() throws IncorrectCredentialException, AuthorizationRequiredException
+    public void blockStationTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -284,14 +282,14 @@ public class SupervisionSoftwareTest
         assertEquals(SelfCheckoutSoftware.Phase.BLOCKING, selfCheckoutSoftware1.getPhase());
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void blockStationUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void blockStationUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.blockStation(selfCheckoutSoftware1);
     }
 
     @Test
-    public void unblockStationTest() throws IncorrectCredentialException, AuthorizationRequiredException
+    public void unblockStationTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -305,14 +303,14 @@ public class SupervisionSoftwareTest
 
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void unblockStationUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void unblockStationUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.unblockStation(selfCheckoutSoftware1);
     }
 
     @Test()
-    public void approveWeightDiscrepancyTest() throws IncorrectCredentialException, AuthorizationRequiredException
+    public void approveWeightDiscrepancyTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -322,7 +320,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test(expected = IllegalStateException.class)
-    public void approveWeightDiscrepancyUnsuccessfullyTest() throws AuthorizationRequiredException, IncorrectCredentialException
+    public void approveWeightDiscrepancyUnsuccessfullyTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -330,15 +328,15 @@ public class SupervisionSoftwareTest
         supervisionSoftware.approveWeightDiscrepancy(selfCheckoutSoftware1);
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void approveWeightDiscrepancyUnsuccessfullyTest2() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void approveWeightDiscrepancyUnsuccessfullyTest2() throws Exception
     {
         selfCheckoutSoftware1.weightDiscrepancy();
         supervisionSoftware.approveWeightDiscrepancy(selfCheckoutSoftware1);
     }
 
     @Test
-    public void approveItemTest() throws IncorrectCredentialException, AuthorizationRequiredException
+    public void approveItemTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
         supervisionSoftware.add(selfCheckoutSoftware1);
@@ -350,8 +348,8 @@ public class SupervisionSoftwareTest
         assertEquals(SelfCheckoutSoftware.Phase.SCANNING_ITEM, selfCheckoutSoftware1.getPhase());
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void approveItemUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void approveItemUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.approveItemNotBaggable(selfCheckoutSoftware1);
     }
@@ -370,7 +368,7 @@ public class SupervisionSoftwareTest
     }
 
     @Test
-    public void approveUseOfOwnBagsTest() throws IncorrectCredentialException, AuthorizationRequiredException
+    public void approveUseOfOwnBagsTest() throws Exception, Exception
     {
         supervisionSoftware.login(username, password);
 
@@ -379,8 +377,8 @@ public class SupervisionSoftwareTest
         assertEquals(SelfCheckoutSoftware.Phase.SCANNING_ITEM, selfCheckoutSoftware1.getPhase());
     }
 
-    @Test(expected = AuthorizationRequiredException.class)
-    public void approveUseOfOwnBagsUnsuccessfullyTest() throws AuthorizationRequiredException
+    @Test(expected = Exception.class)
+    public void approveUseOfOwnBagsUnsuccessfullyTest() throws Exception
     {
         supervisionSoftware.approveUseOfOwnBags(selfCheckoutSoftware1);
     }

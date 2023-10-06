@@ -46,7 +46,6 @@ import software.SelfCheckoutSoftware;
 import software.SelfCheckoutSoftware.Phase;
 import store.Inventory;
 import store.Store;
-import store.credentials.AuthorizationRequiredException;
 
 public class Scenes {
 
@@ -1160,7 +1159,7 @@ public class Scenes {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					GUI.shutdownStation(currentStation);
-				} catch (AuthorizationRequiredException e1) {
+				} catch (Exception e1) {
 					Scenes.errorMsg("incorrect login info");
 				}
 				authorizedWindow.dispatchEvent(new WindowEvent(authorizedWindow, WindowEvent.WINDOW_CLOSING));

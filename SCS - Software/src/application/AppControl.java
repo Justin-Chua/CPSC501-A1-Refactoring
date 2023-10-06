@@ -22,9 +22,7 @@ import software.SelfCheckoutSoftware;
 import software.SupervisionSoftware;
 import software.SelfCheckoutSoftware.Phase;
 import store.Store;
-import store.credentials.AuthorizationRequiredException;
 import store.credentials.CredentialsSystem;
-import store.credentials.IncorrectCredentialException;
 import user.Attendant;
 import user.Customer;
 import user.User;
@@ -328,13 +326,13 @@ public class AppControl {
 		if (selfStationSoftwares.get(station).getPhase() != Phase.BLOCKING) {
 			try {
 				supervisorSoftware.blockStation(selfStationSoftwares.get(station));
-			} catch (AuthorizationRequiredException e) {
+			} catch (Exception e) {
 			}
 
 		} else if (selfStationSoftwares.get(station).getPhase() == Phase.BLOCKING) {
 			try {
 				supervisorSoftware.unblockStation(selfStationSoftwares.get(station));
-			} catch (AuthorizationRequiredException e) {
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -347,17 +345,17 @@ public class AppControl {
 		if (selfStationSoftwares.get(station).getPhase() == Phase.HAVING_WEIGHT_DISCREPANCY) {
 			try {
 				supervisorSoftware.approveWeightDiscrepancy(selfStationSoftwares.get(station));
-			} catch (AuthorizationRequiredException e) {
+			} catch (Exception e) {
 			}
 		} else if (selfStationSoftwares.get(station).getPhase() == Phase.NON_BAGGABLE_ITEM) {
 			try {
 				supervisorSoftware.approveItemNotBaggable(selfStationSoftwares.get(station));
-			} catch (AuthorizationRequiredException e) {
+			} catch (Exception e) {
 			}
 		} else if (selfStationSoftwares.get(station).getPhase() == Phase.PLACING_OWN_BAG) {
 			try {
 				supervisorSoftware.approveUseOfOwnBags(selfStationSoftwares.get(station));
-			} catch (AuthorizationRequiredException e) {
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -475,7 +473,7 @@ public class AppControl {
 			activeUser = supervisorSoftware.getAttendant();
 			users[0] = activeUser;
 			return true;
-		} catch (IncorrectCredentialException e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
