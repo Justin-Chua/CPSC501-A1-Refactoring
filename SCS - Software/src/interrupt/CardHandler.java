@@ -22,7 +22,7 @@ import user.Customer;
 public class CardHandler extends Handler implements CardReaderObserver {
 
 	private final SelfCheckoutSoftware scss;
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	/*
@@ -30,7 +30,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 	 */
 	public CardHandler(SelfCheckoutSoftware scss) {
 		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+		this.scStation = this.scss.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -41,7 +41,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 	}
 
 	public void attachAll() {
-		this.scs.cardReader.attach(this);
+		this.scStation.cardReader.attach(this);
 	}
 
 	/**
@@ -49,21 +49,21 @@ public class CardHandler extends Handler implements CardReaderObserver {
 	 * we can stop listening or assign a new handler.
 	 */
 	public void detatchAll() {
-		this.scs.cardReader.detach(this);
+		this.scStation.cardReader.detach(this);
 	}
 
 	/**
 	 * Used to enable all the associated hardware.
 	 */
 	public void enableHardware() {
-		this.scs.cardReader.enable();
+		this.scStation.cardReader.enable();
 	}
 
 	/**
 	 * Used to disable all the associated hardware.
 	 */
 	public void disableHardware() {
-		this.scs.cardReader.disable();
+		this.scStation.cardReader.disable();
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 	public void cardDataRead(CardReader reader, CardData data) {
 		// The card data is read, so disable the device until the transaction is
 		// complete.
-		this.scs.cardReader.disable();
+		this.scStation.cardReader.disable();
 
 		// Get the type of card first and strip all whitespace and make it lowercase
 		String type = data.getType().toLowerCase().strip();
@@ -185,7 +185,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 		}
 
 		// Re-enable card reader since transaction is complete or failed.
-		this.scs.cardReader.enable();
+		this.scStation.cardReader.enable();
 
 		// Variables will be reset after when the next customer is binded.
 	}

@@ -33,7 +33,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 		BanknoteStorageUnitObserver, BanknoteValidatorObserver {
 
 	private final SelfCheckoutSoftware scss;
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	// record latest processed banknote(bn)
@@ -42,7 +42,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 
 	public BanknoteHandler(SelfCheckoutSoftware scss) {
 		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+		this.scStation = this.scss.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -61,11 +61,11 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 
 	public void attachAll() {
 		// attaches itself as an observer to all related hardware
-		this.scs.banknoteInput.attach(this);
-		this.scs.banknoteOutput.attach(this);
-		this.scs.banknoteValidator.attach(this);
-		this.scs.banknoteDispensers.forEach((k, v) -> v.attach(this));
-		this.scs.banknoteStorage.attach(this);
+		this.scStation.banknoteInput.attach(this);
+		this.scStation.banknoteOutput.attach(this);
+		this.scStation.banknoteValidator.attach(this);
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.attach(this));
+		this.scStation.banknoteStorage.attach(this);
 	}
 
 	/**
@@ -83,33 +83,33 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 	 * we can stop listening or assign a new handler.
 	 */
 	public void detatchAll() {
-		this.scs.banknoteInput.detach(this);
-		this.scs.banknoteOutput.detach(this);
-		this.scs.banknoteValidator.detach(this);
-		this.scs.banknoteDispensers.forEach((k, v) -> v.detach(this));
-		this.scs.banknoteStorage.detach(this);
+		this.scStation.banknoteInput.detach(this);
+		this.scStation.banknoteOutput.detach(this);
+		this.scStation.banknoteValidator.detach(this);
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.detach(this));
+		this.scStation.banknoteStorage.detach(this);
 	}
 
 	/**
 	 * Used to enable all the associated hardware in a single function.
 	 */
 	public void enableHardware() {
-		this.scs.banknoteInput.enable();
-		this.scs.banknoteOutput.enable();
-		this.scs.banknoteStorage.enable();
-		this.scs.banknoteValidator.enable();
-		this.scs.banknoteDispensers.forEach((k, v) -> v.enable());
+		this.scStation.banknoteInput.enable();
+		this.scStation.banknoteOutput.enable();
+		this.scStation.banknoteStorage.enable();
+		this.scStation.banknoteValidator.enable();
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.enable());
 	}
 
 	/**
 	 * Used to disable all the associated hardware in a single function.
 	 */
 	public void disableHardware() {
-		this.scs.banknoteInput.disable();
-		this.scs.banknoteOutput.disable();
-		this.scs.banknoteStorage.disable();
-		this.scs.banknoteValidator.disable();
-		this.scs.banknoteDispensers.forEach((k, v) -> v.disable());
+		this.scStation.banknoteInput.disable();
+		this.scStation.banknoteOutput.disable();
+		this.scStation.banknoteStorage.disable();
+		this.scStation.banknoteValidator.disable();
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.disable());
 	}
 
 	public boolean isBanknoteDetected() {
@@ -153,7 +153,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 	 */
 	@Override
 	public void banknotesFull(BanknoteStorageUnit unit) {
-		this.scs.banknoteInput.disable();
+		this.scStation.banknoteInput.disable();
 		this.scss.notifyObservers(observer -> observer.banknoteStorageFull());
 		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.banknoteStorageFull(scss));
 	}
@@ -212,7 +212,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 		// Customer removed a banknote from banknote output
 		// And Checkout keep making change to the customer in case there are pending
 		// banknote not returned to customer yet
-		if (slot.equals(this.scs.banknoteOutput) && this.scss.hasPendingChanges()) {
+		if (slot.equals(this.scStation.banknoteOutput) && this.scss.hasPendingChanges()) {
 			this.scss.makeChange();
 		}
 	}

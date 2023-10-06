@@ -31,7 +31,7 @@ import user.Customer;
  */
 public class Checkout {
 	private final SelfCheckoutSoftware scss;
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	// This list contains "banknote" cash objects, the cash object is simply the
@@ -40,7 +40,7 @@ public class Checkout {
 
 	public Checkout(SelfCheckoutSoftware scss) {
 		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+		this.scStation = this.scss.getSelfCheckoutStation();
 	}
 
 	/**
@@ -105,25 +105,25 @@ public class Checkout {
 
 	private void enableBanknoteInput() {
 		// enable all input/output devices relating to the banknote slot
-		this.scs.banknoteInput.enable();
-		this.scs.banknoteOutput.enable();
-		this.scs.banknoteValidator.enable();
-		this.scs.banknoteStorage.enable();
-		this.scs.banknoteDispensers.forEach((k, v) -> v.enable());
+		this.scStation.banknoteInput.enable();
+		this.scStation.banknoteOutput.enable();
+		this.scStation.banknoteValidator.enable();
+		this.scStation.banknoteStorage.enable();
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.enable());
 	}
 
 	private void enableCoinInput() {
 		// enable all input/output devices relating to the coin slot
-		this.scs.coinSlot.enable();
-		this.scs.coinTray.enable();
-		this.scs.coinValidator.enable();
-		this.scs.coinStorage.enable();
-		this.scs.coinDispensers.forEach((k, v) -> v.enable());
+		this.scStation.coinSlot.enable();
+		this.scStation.coinTray.enable();
+		this.scStation.coinValidator.enable();
+		this.scStation.coinStorage.enable();
+		this.scStation.coinDispensers.forEach((k, v) -> v.enable());
 	}
 
 	private void enableCardReader() {
 		// enable all input/output devices relating to the card reader
-		this.scs.cardReader.enable();
+		this.scStation.cardReader.enable();
 	}
 
 	public boolean hasPendingChange() {
@@ -178,7 +178,7 @@ public class Checkout {
 		for (Cash cash : this.pendingChanges) {
 			if (cash.type.equals("banknote")) {
 				try {
-					this.scs.banknoteDispensers.get(cash.value.intValue()).emit();
+					this.scStation.banknoteDispensers.get(cash.value.intValue()).emit();
 					newPendingChanges.remove(cash);
 					this.scss.setBanknoteDangling(true);
 				} catch (EmptyException | DisabledException | OverloadException e) {
@@ -186,7 +186,7 @@ public class Checkout {
 				}
 			} else if (cash.type.equals("coin")) {
 				try {
-					this.scs.coinDispensers.get(cash.value).emit();
+					this.scStation.coinDispensers.get(cash.value).emit();
 					newPendingChanges.remove(cash);
 					this.scss.setCoinInTray(true);
 				} catch (OverloadException | EmptyException | DisabledException e) {
@@ -228,7 +228,7 @@ public class Checkout {
 
 		// go through all banknotes and record all the accepted as well as the available
 		// notes
-		this.scs.banknoteDispensers.forEach((value, dispenser) -> {
+		this.scStation.banknoteDispensers.forEach((value, dispenser) -> {
 			Cash cash = new Cash(value);
 			acceptableDenominations.add(cash);
 
@@ -238,7 +238,7 @@ public class Checkout {
 		});
 
 		// same thing with coins
-		this.scs.coinDispensers.forEach((value, dispenser) -> {
+		this.scStation.coinDispensers.forEach((value, dispenser) -> {
 			Cash cash = new Cash(value);
 			acceptableDenominations.add(cash);
 

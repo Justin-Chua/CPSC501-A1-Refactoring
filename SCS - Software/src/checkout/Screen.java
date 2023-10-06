@@ -7,12 +7,12 @@ import user.Customer;
 
 public class Screen {
     private final SelfCheckoutSoftware scss;
-    private final SelfCheckoutStation scs;
+    private final SelfCheckoutStation scStation;
     private Customer customer;
 
     public Screen(SelfCheckoutSoftware scss) {
         this.scss = scss;
-        this.scs = this.scss.getSelfCheckoutStation();
+        this.scStation = this.scss.getSelfCheckoutStation();
     }
 
     public void setCustomer(Customer customer) {
@@ -24,10 +24,10 @@ public class Screen {
     }
 
     public void enableHardware() {
-        this.scs.screen.enable();
+        this.scStation.screen.enable();
     }
 
     public void disableHardware() {
-        this.scs.screen.disable();
+        this.scStation.screen.disable();
     }
 }

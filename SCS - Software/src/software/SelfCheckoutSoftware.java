@@ -52,7 +52,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
     private boolean coinInTray = false;
     private boolean banknoteDangling = false;
 
-    private final SelfCheckoutStation scs;
+    private final SelfCheckoutStation scStation;
     private SupervisionSoftware svs;
     private Customer customer;
     private Attendant attendant;
@@ -66,9 +66,9 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
     private Receipt receipt; // Controller for printing receipt
     private Screen screen; // Controller for displaying messages
 
-    public SelfCheckoutSoftware(SelfCheckoutStation scs)
+    public SelfCheckoutSoftware(SelfCheckoutStation scStation)
     {
-        this.scs = scs;
+        this.scStation = scStation;
         this.phase = Phase.IDLE;
 
         this.startSystem();
@@ -131,7 +131,7 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
 
     public SelfCheckoutStation getSelfCheckoutStation()
     {
-        return this.scs;
+        return this.scStation;
     }
 
     public Customer getCustomer()

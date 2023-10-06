@@ -32,7 +32,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 
 	private static double DISCREPANCY = 1.0; // Scales have margins of errors, this is how much we allow
 
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutStation scStation;
 	private final SelfCheckoutSoftware scss;
 	private Customer customer;
 
@@ -42,7 +42,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 
 	public ProcessItemHandler(SelfCheckoutSoftware scss) {
 		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+		this.scStation = this.scss.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -61,10 +61,10 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 
 	public void attachAll() {
 		// Attach both scanners
-		this.scs.mainScanner.attach(this);
-		this.scs.handheldScanner.attach(this);
-		this.scs.scanningArea.attach(this);
-		this.scs.baggingArea.attach(this);
+		this.scStation.mainScanner.attach(this);
+		this.scStation.handheldScanner.attach(this);
+		this.scStation.scanningArea.attach(this);
+		this.scStation.baggingArea.attach(this);
 	}
 
 	/**
@@ -72,34 +72,34 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 	 * we can stop listening or assign a new handler.
 	 */
 	public void detatchAll() {
-		this.scs.mainScanner.detach(this);
-		this.scs.handheldScanner.detach(this);
-		this.scs.scanningArea.detach(this);
-		this.scs.baggingArea.detach(this);
+		this.scStation.mainScanner.detach(this);
+		this.scStation.handheldScanner.detach(this);
+		this.scStation.scanningArea.detach(this);
+		this.scStation.baggingArea.detach(this);
 	}
 
 	/**
 	 * Used to enable all the associated hardware in a single function.
 	 */
 	public void enableHardware() {
-		this.scs.mainScanner.enable();
-		this.scs.handheldScanner.enable();
-		this.scs.scanningArea.enable();
-		this.scs.baggingArea.enable();
+		this.scStation.mainScanner.enable();
+		this.scStation.handheldScanner.enable();
+		this.scStation.scanningArea.enable();
+		this.scStation.baggingArea.enable();
 	}
 
 	/**
 	 * Used to disable all the associated hardware in a single function.
 	 */
 	public void disableHardware() {
-		this.scs.mainScanner.disable();
-		this.scs.handheldScanner.disable();
-		this.scs.scanningArea.disable();
-		this.scs.baggingArea.disable();
+		this.scStation.mainScanner.disable();
+		this.scStation.handheldScanner.disable();
+		this.scStation.scanningArea.disable();
+		this.scStation.baggingArea.disable();
 	}
 
 	public void enableBaggingArea() {
-		this.scs.baggingArea.enable();
+		this.scStation.baggingArea.enable();
 	}
 
 	@Override
@@ -131,8 +131,8 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 			return;
 		}
 
-		this.scs.mainScanner.disable();
-		this.scs.handheldScanner.disable();
+		this.scStation.mainScanner.disable();
+		this.scStation.handheldScanner.disable();
 
 		// This can only be BarcodedProduct
 		if (product instanceof BarcodedProduct) {
@@ -152,7 +152,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 	 */
 	public void overrideWeight() {
 		try {
-			this.currentWeight = this.scs.baggingArea.getCurrentWeight();
+			this.currentWeight = this.scStation.baggingArea.getCurrentWeight();
 			this.expectedWeight = 0.0;
 		} catch (OverloadException e) {
 			// Hopefully not possible
@@ -179,7 +179,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 			return;
 		}
 
-		if (scale.equals(this.scs.scanningArea)) {
+		if (scale.equals(this.scStation.scanningArea)) {
 			if (this.scss.getPhase() == Phase.WEIGHING_PLU_ITEM) {
 				customer.addProduct(Inventory.getProduct(this.customer.getPLU()), weightInGrams);
 				this.expectedWeight = weightInGrams;
