@@ -363,9 +363,9 @@ public class AppControl {
 	}
 
 	public boolean customerTapsCreditCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.PAYMENT_CARDS.get(1));
+			scSoftware.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.PAYMENT_CARDS.get(1));
 			return true;
 		} catch (IOException e) {
 			errorMsg("tap failed");
@@ -375,9 +375,9 @@ public class AppControl {
 	}
 
 	public boolean customerTapsDebitCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.PAYMENT_CARDS.get(2));
+			scSoftware.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.PAYMENT_CARDS.get(2));
 			return true;
 		} catch (IOException e) {
 			errorMsg("tap failed");
@@ -387,9 +387,9 @@ public class AppControl {
 	}
 
 	public boolean customerTapsMembershipCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.MEMBER_CARDS.get(1));
+			scSoftware.getSelfCheckoutStation().cardReader.tap(Main.Tangibles.MEMBER_CARDS.get(1));
 			return true;
 		} catch (IOException e) {
 			errorMsg("tap failed");
@@ -399,9 +399,9 @@ public class AppControl {
 	}
 
 	public boolean customerSwipesCreditCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.PAYMENT_CARDS.get(1));
+			scSoftware.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.PAYMENT_CARDS.get(1));
 			return true;
 		} catch (IOException e) {
 			errorMsg("swipe failed");
@@ -411,9 +411,9 @@ public class AppControl {
 	}
 
 	public boolean customerSwipesDebitCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.PAYMENT_CARDS.get(2));
+			scSoftware.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.PAYMENT_CARDS.get(2));
 			return true;
 		} catch (IOException e) {
 			errorMsg("swipe failed");
@@ -423,9 +423,9 @@ public class AppControl {
 	}
 
 	public boolean customerSwipesMembershipCard(int index) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.MEMBER_CARDS.get(0));
+			scSoftware.getSelfCheckoutStation().cardReader.swipe(Main.Tangibles.MEMBER_CARDS.get(0));
 			return true;
 		} catch (IOException e) {
 			errorMsg("swipe failed");
@@ -435,9 +435,9 @@ public class AppControl {
 	}
 
 	public boolean customerInsertCreditCard(int index, String pin) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.insert(Main.Tangibles.PAYMENT_CARDS.get(1), pin);
+			scSoftware.getSelfCheckoutStation().cardReader.insert(Main.Tangibles.PAYMENT_CARDS.get(1), pin);
 			return true;
 		} catch (IOException e) {
 			errorMsg("insert failed");
@@ -447,9 +447,9 @@ public class AppControl {
 	}
 
 	public boolean customerInsertDebitCard(int index, String pin) {
-		SelfCheckoutSoftware scs = this.getSelfCheckoutSoftware(index);
+		SelfCheckoutSoftware scSoftware = this.getSelfCheckoutSoftware(index);
 		try {
-			scs.getSelfCheckoutStation().cardReader.insert(Main.Tangibles.PAYMENT_CARDS.get(1), pin);
+			scSoftware.getSelfCheckoutStation().cardReader.insert(Main.Tangibles.PAYMENT_CARDS.get(1), pin);
 			return true;
 		} catch (IOException e) {
 			errorMsg("insert failed");

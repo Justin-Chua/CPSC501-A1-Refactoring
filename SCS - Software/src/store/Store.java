@@ -20,8 +20,8 @@ public final class Store {
         return SUPERVISION_SOFTWARE;
     }
 
-    public static void addSelfCheckoutSoftware(SelfCheckoutSoftware software) {
-        SUPERVISION_SOFTWARE.add(software);
+    public static void addSelfCheckoutSoftware(SelfCheckoutSoftware scSoftware) {
+        SUPERVISION_SOFTWARE.add(scSoftware);
     }
 
     public static List<SelfCheckoutSoftware> getSelfCheckoutSoftwareList() {

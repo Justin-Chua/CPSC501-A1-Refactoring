@@ -30,17 +30,17 @@ import user.Customer;
  * @author Yunfan Yang
  */
 public class Checkout {
-	private final SelfCheckoutSoftware scss;
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutSoftware scSoftware;
+	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	// This list contains "banknote" cash objects, the cash object is simply the
 	// denomination of banknotes and coins
 	private List<Cash> pendingChanges = new ArrayList<Cash>();
 
-	public Checkout(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+	public Checkout(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 	}
 
 	/**
@@ -100,30 +100,30 @@ public class Checkout {
 			throw new IllegalStateException("Customer has paid clear");
 		}
 
-		this.scss.cancelCheckout();
+		this.scSoftware.cancelCheckout();
 	}
 
 	private void enableBanknoteInput() {
 		// enable all input/output devices relating to the banknote slot
-		this.scs.banknoteInput.enable();
-		this.scs.banknoteOutput.enable();
-		this.scs.banknoteValidator.enable();
-		this.scs.banknoteStorage.enable();
-		this.scs.banknoteDispensers.forEach((k, v) -> v.enable());
+		this.scStation.banknoteInput.enable();
+		this.scStation.banknoteOutput.enable();
+		this.scStation.banknoteValidator.enable();
+		this.scStation.banknoteStorage.enable();
+		this.scStation.banknoteDispensers.forEach((k, v) -> v.enable());
 	}
 
 	private void enableCoinInput() {
 		// enable all input/output devices relating to the coin slot
-		this.scs.coinSlot.enable();
-		this.scs.coinTray.enable();
-		this.scs.coinValidator.enable();
-		this.scs.coinStorage.enable();
-		this.scs.coinDispensers.forEach((k, v) -> v.enable());
+		this.scStation.coinSlot.enable();
+		this.scStation.coinTray.enable();
+		this.scStation.coinValidator.enable();
+		this.scStation.coinStorage.enable();
+		this.scStation.coinDispensers.forEach((k, v) -> v.enable());
 	}
 
 	private void enableCardReader() {
 		// enable all input/output devices relating to the card reader
-		this.scs.cardReader.enable();
+		this.scStation.cardReader.enable();
 	}
 
 	public boolean hasPendingChange() {
@@ -145,7 +145,7 @@ public class Checkout {
 	 */
 	public void makeChange() {
 		// Dispense remaining pending change to customer
-		if (this.scss.getPhase() != Phase.PROCESSING_PAYMENT) {
+		if (this.scSoftware.getPhase() != Phase.PROCESSING_PAYMENT) {
 			throw new IllegalStateException("Cannot make change if it currently is not processing payment");
 		}
 
@@ -163,7 +163,7 @@ public class Checkout {
 
 		// If no pending changes, return
 		if (this.pendingChanges.isEmpty()) {
-			this.scss.paymentCompleted();
+			this.scSoftware.paymentCompleted();
 			return;
 		}
 
@@ -178,17 +178,17 @@ public class Checkout {
 		for (Cash cash : this.pendingChanges) {
 			if (cash.type.equals("banknote")) {
 				try {
-					this.scs.banknoteDispensers.get(cash.value.intValue()).emit();
+					this.scStation.banknoteDispensers.get(cash.value.intValue()).emit();
 					newPendingChanges.remove(cash);
-					this.scss.setBanknoteDangling(true);
+					this.scSoftware.setBanknoteDangling(true);
 				} catch (EmptyException | DisabledException | OverloadException e) {
 					continue;
 				}
 			} else if (cash.type.equals("coin")) {
 				try {
-					this.scs.coinDispensers.get(cash.value).emit();
+					this.scStation.coinDispensers.get(cash.value).emit();
 					newPendingChanges.remove(cash);
-					this.scss.setCoinInTray(true);
+					this.scSoftware.setCoinInTray(true);
 				} catch (OverloadException | EmptyException | DisabledException e) {
 					continue;
 				}
@@ -200,15 +200,15 @@ public class Checkout {
 		// If size does not change, meaning no change is successfully emmited for
 		// customer, encounters error, notify attendant
 		if (size <= newPendingChanges.size()) {
-			this.scss.errorOccur();
-			this.scss.getSupervisionSoftware()
-					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scss));
+			this.scSoftware.errorOccur();
+			this.scSoftware.getSupervisionSoftware()
+					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scSoftware));
 			return;
 		}
 
 		// If the last one is dispensed, to next phase
 		if (this.pendingChanges.isEmpty()) {
-			this.scss.paymentCompleted();
+			this.scSoftware.paymentCompleted();
 			return;
 		}
 	}
@@ -228,7 +228,7 @@ public class Checkout {
 
 		// go through all banknotes and record all the accepted as well as the available
 		// notes
-		this.scs.banknoteDispensers.forEach((value, dispenser) -> {
+		this.scStation.banknoteDispensers.forEach((value, dispenser) -> {
 			Cash cash = new Cash(value);
 			acceptableDenominations.add(cash);
 
@@ -238,7 +238,7 @@ public class Checkout {
 		});
 
 		// same thing with coins
-		this.scs.coinDispensers.forEach((value, dispenser) -> {
+		this.scStation.coinDispensers.forEach((value, dispenser) -> {
 			Cash cash = new Cash(value);
 			acceptableDenominations.add(cash);
 

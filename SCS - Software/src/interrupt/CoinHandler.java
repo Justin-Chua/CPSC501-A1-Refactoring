@@ -34,16 +34,16 @@ public class CoinHandler extends Handler
 		implements CoinDispenserObserver, CoinSlotObserver, CoinStorageUnitObserver, CoinTrayObserver,
 		CoinValidatorObserver {
 
-	private final SelfCheckoutSoftware scss;
-	private final SelfCheckoutStation scs;
+	private final SelfCheckoutSoftware scSoftware;
+	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	private boolean coinDetected = false;
 	private BigDecimal coinValue;
 
-	public CoinHandler(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scs = this.scss.getSelfCheckoutStation();
+	public CoinHandler(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -63,11 +63,11 @@ public class CoinHandler extends Handler
 
 	// Attach all the hardware
 	public void attachAll() {
-		this.scs.coinTray.attach(this);
-		this.scs.coinSlot.attach(this);
-		this.scs.coinValidator.attach(this);
-		this.scs.coinStorage.attach(this);
-		this.scs.coinDispensers.forEach((k, v) -> v.attach(this));
+		this.scStation.coinTray.attach(this);
+		this.scStation.coinSlot.attach(this);
+		this.scStation.coinValidator.attach(this);
+		this.scStation.coinStorage.attach(this);
+		this.scStation.coinDispensers.forEach((k, v) -> v.attach(this));
 	}
 
 	/**
@@ -75,33 +75,33 @@ public class CoinHandler extends Handler
 	 * we can stop listening or assign a new handler.
 	 */
 	public void detatchAll() {
-		this.scs.coinTray.detach(this);
-		this.scs.coinSlot.detach(this);
-		this.scs.coinValidator.detach(this);
-		this.scs.coinStorage.detach(this);
-		this.scs.coinDispensers.forEach((k, v) -> v.detach(this));
+		this.scStation.coinTray.detach(this);
+		this.scStation.coinSlot.detach(this);
+		this.scStation.coinValidator.detach(this);
+		this.scStation.coinStorage.detach(this);
+		this.scStation.coinDispensers.forEach((k, v) -> v.detach(this));
 	}
 
 	/**
 	 * Used to enable all the associated hardware in a single function.
 	 */
 	public void enableHardware() {
-		this.scs.coinSlot.enable();
-		this.scs.coinTray.enable();
-		this.scs.coinStorage.enable();
-		this.scs.coinValidator.enable();
-		this.scs.coinDispensers.forEach((k, v) -> v.enable());
+		this.scStation.coinSlot.enable();
+		this.scStation.coinTray.enable();
+		this.scStation.coinStorage.enable();
+		this.scStation.coinValidator.enable();
+		this.scStation.coinDispensers.forEach((k, v) -> v.enable());
 	}
 
 	/**
 	 * Used to disable all the associated hardware in a single function.
 	 */
 	public void disableHardware() {
-		this.scs.coinSlot.disable();
-		this.scs.coinTray.disable();
-		this.scs.coinStorage.disable();
-		this.scs.coinValidator.disable();
-		this.scs.coinDispensers.forEach((k, v) -> v.disable());
+		this.scStation.coinSlot.disable();
+		this.scStation.coinTray.disable();
+		this.scStation.coinStorage.disable();
+		this.scStation.coinValidator.disable();
+		this.scStation.coinDispensers.forEach((k, v) -> v.disable());
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class CoinHandler extends Handler
 	public void invalidCoinDetected(CoinValidator validator) {
 		this.coinDetected = false;
 		this.coinValue = BigDecimal.ZERO;
-		this.scss.notifyObservers(observer -> observer.invalidCoinDetected());
+		this.scSoftware.notifyObservers(observer -> observer.invalidCoinDetected());
 	}
 
 	@Override
@@ -152,19 +152,19 @@ public class CoinHandler extends Handler
 
 	@Override
 	public void coinsUnloaded(CoinStorageUnit unit) {
-		this.scs.coinSlot.enable();
+		this.scStation.coinSlot.enable();
 	}
 
 	// disables the coin slot when coin storage is full
 	@Override
 	public void coinsFull(CoinStorageUnit unit) {
-		this.scs.coinSlot.disable();
+		this.scStation.coinSlot.disable();
 
 		// Notify attendant that the coin storage is full
-		SupervisionSoftware svs = scss.getSupervisionSoftware();
-		svs.notifyObservers(observer -> observer.coinStorageFull(scss));
+		SupervisionSoftware svs = scSoftware.getSupervisionSoftware();
+		svs.notifyObservers(observer -> observer.coinStorageFull(scSoftware));
 
-		this.scss.notifyObservers(observer -> observer.coinStorageFull());
+		this.scSoftware.notifyObservers(observer -> observer.coinStorageFull());
 	}
 	
 	private void coinAddedLogic() {
@@ -172,7 +172,7 @@ public class CoinHandler extends Handler
 			this.customer.addCashBalance(coinValue);
 
 			// Notify observer so GUI can update current cash balance on display
-			this.scss.notifyObservers(observer -> observer.coinAdded());
+			this.scSoftware.notifyObservers(observer -> observer.coinAdded());
 		}
 
 		this.coinDetected = false;
@@ -193,8 +193,8 @@ public class CoinHandler extends Handler
 
 	@Override
 	public void coinsEmpty(CoinDispenser dispenser) {
-		this.scss.notifyObservers(observer -> observer.coinDispenserEmpty());
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.coinDispenserEmpty(this.scss));
+		this.scSoftware.notifyObservers(observer -> observer.coinDispenserEmpty());
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.coinDispenserEmpty(this.scSoftware));
 	}
 
 	/**

@@ -4,41 +4,41 @@ import software.SelfCheckoutSoftware;
 
 public interface SupervisionObserver extends Observer {
     // Banknore Handler
-    public Void banknoteStorageFull(SelfCheckoutSoftware scs);
+    public Void banknoteStorageFull(SelfCheckoutSoftware scSoftware);
 
-    public Void banknoteDispenserEmpty(SelfCheckoutSoftware scs);
+    public Void banknoteDispenserEmpty(SelfCheckoutSoftware scSoftware);
 
     // Coin Handler
-    public Void coinStorageFull(SelfCheckoutSoftware scs);
+    public Void coinStorageFull(SelfCheckoutSoftware scSoftware);
 
-    public Void coinDispenserEmpty(SelfCheckoutSoftware scs);
+    public Void coinDispenserEmpty(SelfCheckoutSoftware scSoftware);
 
     // Checkout Handler
-    public Void dispenseChangeFailed(SelfCheckoutSoftware scs);//
+    public Void dispenseChangeFailed(SelfCheckoutSoftware scSoftware);//
 
     // Receipt Handler
-    public Void receiptPrinterOutOfPaper(SelfCheckoutSoftware scs);//
+    public Void receiptPrinterOutOfPaper(SelfCheckoutSoftware scSoftware);//
     
-    public Void receiptPrinterLowOnPaper(SelfCheckoutSoftware scs);//
+    public Void receiptPrinterLowOnPaper(SelfCheckoutSoftware scSoftware);//
     
-    public Void receiptPrinterPaperOverloaded(SelfCheckoutSoftware scs);
+    public Void receiptPrinterPaperOverloaded(SelfCheckoutSoftware scSoftware);
 
-    public Void receiptPrinterOutOfInk(SelfCheckoutSoftware scs);//
+    public Void receiptPrinterOutOfInk(SelfCheckoutSoftware scSoftware);//
     
-    public Void receiptPrinterLowOnInk(SelfCheckoutSoftware scs);//
+    public Void receiptPrinterLowOnInk(SelfCheckoutSoftware scSoftware);//
     
-    public Void receiptPrinterInkOverloaded(SelfCheckoutSoftware scs);
+    public Void receiptPrinterInkOverloaded(SelfCheckoutSoftware scSoftware);
 
     //Process Item Handler
-    public Void weightDiscrepancyDetected(SelfCheckoutSoftware scs);//
+    public Void weightDiscrepancyDetected(SelfCheckoutSoftware scSoftware);//
 
-    public Void touchScreenBlocked(SelfCheckoutSoftware scs);
+    public Void touchScreenBlocked(SelfCheckoutSoftware scSoftware);
 
-    public Void touchScreenUnblocked(SelfCheckoutSoftware scs);
+    public Void touchScreenUnblocked(SelfCheckoutSoftware scSoftware);
 
-    public Void scaleOverloadedDetected(SelfCheckoutSoftware scs);
+    public Void scaleOverloadedDetected(SelfCheckoutSoftware scSoftware);
 
-    public Void scaleOverloadedResolved(SelfCheckoutSoftware scs);
+    public Void scaleOverloadedResolved(SelfCheckoutSoftware scSoftware);
 
-    public Void customerDoesNotWantToBagItem(SelfCheckoutSoftware scs);//
+    public Void customerDoesNotWantToBagItem(SelfCheckoutSoftware scSoftware);//
 }
