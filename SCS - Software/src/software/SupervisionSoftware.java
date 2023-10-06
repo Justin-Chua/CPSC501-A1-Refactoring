@@ -134,9 +134,9 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 *         do
 	 *         because the hardware team should have it enabled?
 	 */
-	public void startUpStation(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void startUpStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.startSystem();
+			scSoftware.startSystem();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
@@ -149,9 +149,9 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * @return T/F - whether the checkoutStation has been removed. (If false
 	 *         the station most likely is not in the HashMap not exist)
 	 */
-	public void shutDownStation(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void shutDownStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.stopSystem();
+			scSoftware.stopSystem();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
@@ -161,45 +161,45 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 * This function should block the Station. We disable the hardware
 	 * so that we cannot receive events.
 	 * 
-	 * @param scss - the SelfCheckoutSoftware
+	 * @param scSoftware - the SelfCheckoutSoftware
 	 * @return T/F whether the station has been blocked.
 	 */
-	public void blockStation(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void blockStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.blockSystem();
+			scSoftware.blockSystem();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
 	}
 
-	public void unblockStation(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void unblockStation(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.unblockSystem();
+			scSoftware.unblockSystem();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
 	}
 
-	public void approveWeightDiscrepancy(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void approveWeightDiscrepancy(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.approveWeightDiscrepancy();
+			scSoftware.approveWeightDiscrepancy();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
 	}
 
-	public void approveItemNotBaggable(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void approveItemNotBaggable(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.addItem();
+			scSoftware.addItem();
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
 	}
 	
 
-	public void approveUseOfOwnBags(SelfCheckoutSoftware scss) throws AuthorizationRequiredException {
+	public void approveUseOfOwnBags(SelfCheckoutSoftware scSoftware) throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			scss.addItem();
+			scSoftware.addItem();
 		} else {
 			throw new AuthorizationRequiredException("Atendant needs to log in");
 		}
@@ -235,16 +235,16 @@ public class SupervisionSoftware extends Software<SupervisionObserver> {
 	 */
 	public void restart() throws AuthorizationRequiredException {
 		if (this.logged_in) {
-			SupervisionSoftware scss = new SupervisionSoftware(svs, softwareList);
+			SupervisionSoftware scSoftware = new SupervisionSoftware(svs, softwareList);
 			for (SelfCheckoutSoftware software : softwareList)
-				software.setSupervisionSoftware(scss);
-			Store.setSupervisionSoftware(scss);
+				software.setSupervisionSoftware(scSoftware);
+			Store.setSupervisionSoftware(scSoftware);
 		} else {
 			throw new AuthorizationRequiredException("Attendant needs to log in");
 		}
 	}
 
-	public void resolveError(SelfCheckoutSoftware scss) {
-		scss.resolveError();
+	public void resolveError(SelfCheckoutSoftware scSoftware) {
+		scSoftware.resolveError();
 	}
 }

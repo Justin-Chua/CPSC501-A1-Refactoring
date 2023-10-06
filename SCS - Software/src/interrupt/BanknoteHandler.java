@@ -32,7 +32,7 @@ import user.Customer;
 public class BanknoteHandler extends Handler implements BanknoteDispenserObserver, BanknoteSlotObserver,
 		BanknoteStorageUnitObserver, BanknoteValidatorObserver {
 
-	private final SelfCheckoutSoftware scss;
+	private final SelfCheckoutSoftware scSoftware;
 	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
@@ -40,9 +40,9 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 	private boolean banknoteDetected = false;
 	private BigDecimal banknoteValue = BigDecimal.ZERO;
 
-	public BanknoteHandler(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scStation = this.scss.getSelfCheckoutStation();
+	public BanknoteHandler(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -145,7 +145,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 	public void invalidBanknoteDetected(BanknoteValidator validator) {
 		this.banknoteDetected = false;
 		this.banknoteValue = BigDecimal.ZERO;
-		this.scss.notifyObservers(observer -> observer.invalidBanknoteDetected());
+		this.scSoftware.notifyObservers(observer -> observer.invalidBanknoteDetected());
 	}
 
 	/**
@@ -154,8 +154,8 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 	@Override
 	public void banknotesFull(BanknoteStorageUnit unit) {
 		this.scStation.banknoteInput.disable();
-		this.scss.notifyObservers(observer -> observer.banknoteStorageFull());
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.banknoteStorageFull(scss));
+		this.scSoftware.notifyObservers(observer -> observer.banknoteStorageFull());
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.banknoteStorageFull(scSoftware));
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 			this.customer.addCashBalance(banknoteValue);
 
 			// Notify observer so GUI can update current cash balance on display
-			this.scss.notifyObservers(observer -> observer.banknoteAdded());
+			this.scSoftware.notifyObservers(observer -> observer.banknoteAdded());
 		}
 
 		this.banknoteDetected = false;
@@ -212,8 +212,8 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 		// Customer removed a banknote from banknote output
 		// And Checkout keep making change to the customer in case there are pending
 		// banknote not returned to customer yet
-		if (slot.equals(this.scStation.banknoteOutput) && this.scss.hasPendingChanges()) {
-			this.scss.makeChange();
+		if (slot.equals(this.scStation.banknoteOutput) && this.scSoftware.hasPendingChanges()) {
+			this.scSoftware.makeChange();
 		}
 	}
 
@@ -223,8 +223,8 @@ public class BanknoteHandler extends Handler implements BanknoteDispenserObserve
 
 	@Override
 	public void banknotesEmpty(BanknoteDispenser dispenser) {
-		this.scss.notifyObservers(observer -> observer.banknoteDispenserEmpty());
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.banknoteDispenserEmpty(this.scss));
+		this.scSoftware.notifyObservers(observer -> observer.banknoteDispenserEmpty());
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.banknoteDispenserEmpty(this.scSoftware));
 	}
 
 	@Override

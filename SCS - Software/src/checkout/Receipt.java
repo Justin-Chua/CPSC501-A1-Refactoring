@@ -24,15 +24,15 @@ import application.Main.Configurations;
  *
  */
 public class Receipt implements ReceiptPrinterObserver {
-	private final SelfCheckoutSoftware scss;
+	private final SelfCheckoutSoftware scSoftware;
 	private final SelfCheckoutStation scStation;
 	private Customer customer;
 	private int inkUsed = 0;
 	private int paperUsed = 0;
 
-	public Receipt(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scStation = this.scss.getSelfCheckoutStation();
+	public Receipt(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -167,11 +167,11 @@ public class Receipt implements ReceiptPrinterObserver {
 	public void checkLowPrinterCapacity() {
 		// check to see if the amount of paper printed exceeds 90% of the maximum capacity for paper
 		if (this.paperUsed >= (int)((ReceiptPrinter.MAXIMUM_PAPER * 9) / 10)) {
-			this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterLowOnPaper(this.scss));
+			this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterLowOnPaper(this.scSoftware));
 		}
 		// check to see if the amount of ink printed exceeds 90% of the maximum capacity for ink
 		if (this.inkUsed >= (int)((ReceiptPrinter.MAXIMUM_INK * 9) / 10)) {
-			this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterLowOnInk(this.scss));
+			this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterLowOnInk(this.scSoftware));
 		}
 	}
 	
@@ -214,7 +214,7 @@ public class Receipt implements ReceiptPrinterObserver {
 		scStation.printer.disable();
 
 		// announce that machine has run out of paper
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterOutOfPaper(this.scss));
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterOutOfPaper(this.scSoftware));
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class Receipt implements ReceiptPrinterObserver {
 		scStation.printer.disable();
 
 		// announce that machine has run out of ink
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterOutOfInk(this.scss));
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.receiptPrinterOutOfInk(this.scSoftware));
 	}
 
 	@Override

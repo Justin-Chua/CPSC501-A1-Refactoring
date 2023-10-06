@@ -21,16 +21,16 @@ import user.Customer;
  */
 public class CardHandler extends Handler implements CardReaderObserver {
 
-	private final SelfCheckoutSoftware scss;
+	private final SelfCheckoutSoftware scSoftware;
 	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
 	/*
 	 * Constructor for creating a CardHandler. Attaches itself to the cardReader.
 	 */
-	public CardHandler(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scStation = this.scss.getSelfCheckoutStation();
+	public CardHandler(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -125,12 +125,12 @@ public class CardHandler extends Handler implements CardReaderObserver {
 			boolean isMember = Membership.isMember(memberID);
 
 			if (!isMember) {
-				this.scss.notifyObservers(observer -> observer.invalidMembershipCardDetected());
+				this.scSoftware.notifyObservers(observer -> observer.invalidMembershipCardDetected());
 				return;
 			}
 
 			this.customer.setMemberID(memberID);
-			this.scss.notifyObservers(observer -> observer.membershipCardDetected(memberID));
+			this.scSoftware.notifyObservers(observer -> observer.membershipCardDetected(memberID));
 		} else if (type.equals("debit") || type.equals("credit")) {
 			String cardNumber = data.getNumber();
 
@@ -139,7 +139,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 
 			// Fail to hold the authorization
 			if (holdNumber == -1) {
-				this.scss.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
+				this.scSoftware.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
 				return;
 			}
 
@@ -147,12 +147,12 @@ public class CardHandler extends Handler implements CardReaderObserver {
 
 			// Fail to post transaction
 			if (!posted) {
-				this.scss.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
+				this.scSoftware.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
 				return;
 			}
 
-			this.scss.paymentCompleted(); // Transaction is complete, go to idle state
-			this.scss.notifyObservers(observer -> observer.paymentCompleted());
+			this.scSoftware.paymentCompleted(); // Transaction is complete, go to idle state
+			this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
 		} else if (type.equals("gift")) {
 			if (GiftCard.isGiftCard(data.getNumber())) {
 				String cardNumber = data.getNumber();
@@ -161,7 +161,7 @@ public class CardHandler extends Handler implements CardReaderObserver {
 
 				// Fail to hold the authorization
 				if (holdNumber == -1) {
-					this.scss.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
+					this.scSoftware.notifyObservers(observer -> observer.paymentHoldingAuthorizationFailed());
 					return;
 				}
 
@@ -169,19 +169,19 @@ public class CardHandler extends Handler implements CardReaderObserver {
 
 				// Fail to post transaction
 				if (!posted) {
-					this.scss.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
+					this.scSoftware.notifyObservers(observer -> observer.paymentPostingTransactionFailed());
 					return;
 				}
-				this.scss.notifyObservers(observer -> observer.paymentCompleted());
+				this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
 				return;
 			} else {
-				this.scss.notifyObservers(observer -> observer.invalidGiftCardDetected());
+				this.scSoftware.notifyObservers(observer -> observer.invalidGiftCardDetected());
 			}
 
-			this.scss.paymentCompleted(); // Transaction is complete, go to idle state
-			this.scss.notifyObservers(observer -> observer.paymentCompleted());
+			this.scSoftware.paymentCompleted(); // Transaction is complete, go to idle state
+			this.scSoftware.notifyObservers(observer -> observer.paymentCompleted());
 		} else {
-			this.scss.notifyObservers(observer -> observer.invalidCardTypeDetected());
+			this.scSoftware.notifyObservers(observer -> observer.invalidCardTypeDetected());
 		}
 
 		// Re-enable card reader since transaction is complete or failed.

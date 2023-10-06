@@ -6,13 +6,13 @@ import software.SelfCheckoutSoftware;
 import user.Customer;
 
 public class Screen {
-    private final SelfCheckoutSoftware scss;
+    private final SelfCheckoutSoftware scSoftware;
     private final SelfCheckoutStation scStation;
     private Customer customer;
 
-    public Screen(SelfCheckoutSoftware scss) {
-        this.scss = scss;
-        this.scStation = this.scss.getSelfCheckoutStation();
+    public Screen(SelfCheckoutSoftware scSoftware) {
+        this.scSoftware = scSoftware;
+        this.scStation = this.scSoftware.getSelfCheckoutStation();
     }
 
     public void setCustomer(Customer customer) {

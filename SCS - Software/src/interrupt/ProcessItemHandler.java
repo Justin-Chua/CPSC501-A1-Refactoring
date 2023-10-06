@@ -33,16 +33,16 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 	private static double DISCREPANCY = 1.0; // Scales have margins of errors, this is how much we allow
 
 	private final SelfCheckoutStation scStation;
-	private final SelfCheckoutSoftware scss;
+	private final SelfCheckoutSoftware scSoftware;
 	private Customer customer;
 
 	private double currentWeight = 0.0;
 	private double expectedWeight = 0.0;
 	private boolean scaleOverloaded;
 
-	public ProcessItemHandler(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scStation = this.scss.getSelfCheckoutStation();
+	public ProcessItemHandler(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 
 		this.attachAll();
 		this.enableHardware();
@@ -127,7 +127,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 		Product product = Inventory.getProduct(barcode);
 
 		if (product == null) {
-			this.scss.notifyObservers(observer -> observer.productCannotFound());
+			this.scSoftware.notifyObservers(observer -> observer.productCannotFound());
 			return;
 		}
 
@@ -143,8 +143,8 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 		// TODO: For PLU items, Incorporate this scanning area electronic scale
 
 		this.customer.addProduct(product);
-		this.scss.bagItem();
-		this.scss.notifyObservers(observer -> observer.placeInBaggingAreaBlocked());
+		this.scSoftware.bagItem();
+		this.scSoftware.notifyObservers(observer -> observer.placeInBaggingAreaBlocked());
 	}
 
 	/**
@@ -180,33 +180,33 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 		}
 
 		if (scale.equals(this.scStation.scanningArea)) {
-			if (this.scss.getPhase() == Phase.WEIGHING_PLU_ITEM) {
+			if (this.scSoftware.getPhase() == Phase.WEIGHING_PLU_ITEM) {
 				customer.addProduct(Inventory.getProduct(this.customer.getPLU()), weightInGrams);
 				this.expectedWeight = weightInGrams;
-				this.scss.bagItem();
+				this.scSoftware.bagItem();
 				return; //we want to get the call from bagging area.
 			}
 			return;
 		}
 
-		if (this.scss.getPhase() == Phase.PAYMENT_COMPLETE) {
+		if (this.scSoftware.getPhase() == Phase.PAYMENT_COMPLETE) {
 			if (weightInGrams == 0.0) {
-				this.scss.checkoutComplete();
+				this.scSoftware.checkoutComplete();
 			}
 			return;
 		}
 
 		// Get the weight of the bag and store it, if the customer is trying to add
 		// their own bag to the bagging area
-		if (this.scss.getPhase() == Phase.PLACING_OWN_BAG) {
+		if (this.scSoftware.getPhase() == Phase.PLACING_OWN_BAG) {
 			this.currentWeight = weightInGrams; // Record the new weight (with the bag)
-			// this.scss.addItem(); // go back to add item phase !!!! not until attendant says so!
+			// this.scSoftware.addItem(); // go back to add item phase !!!! not until attendant says so!
 			return;
 		}
 		
 		// If currently detecting weight discrepancy and required removal
 		// The weight should be back to currentWeight
-		if (this.scss.getPhase() == Phase.HAVING_WEIGHT_DISCREPANCY) {
+		if (this.scSoftware.getPhase() == Phase.HAVING_WEIGHT_DISCREPANCY) {
 			// When not adding new item, the weight should be back to currentWeight, which
 			// is 0.0 + currentWeight.
 			// If it's adding new item, the weight should be the item weight + currrent
@@ -219,7 +219,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 			// Discrepancy is resolved
 			if (discrepancy <= DISCREPANCY) {
 				this.acceptNewWeight(weightInGrams);
-				this.scss.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaResolved());
+				this.scSoftware.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaResolved());
 			}
 			// Else do nothing, the discrepancy phase keeps
 
@@ -227,10 +227,10 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 		}
 
 		// If the current phase is not bagging item, then there's unexpected item
-		if (this.scss.getPhase() != Phase.BAGGING_ITEM) {
-			this.scss.weightDiscrepancy();
-			this.scss.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaDetected());
-			this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.weightDiscrepancyDetected(this.scss));
+		if (this.scSoftware.getPhase() != Phase.BAGGING_ITEM) {
+			this.scSoftware.weightDiscrepancy();
+			this.scSoftware.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaDetected());
+			this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.weightDiscrepancyDetected(this.scSoftware));
 			return;
 		}
 
@@ -243,9 +243,9 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 
 		// If the discrepancy is too large
 		if (discrepancy > DISCREPANCY) {
-			this.scss.weightDiscrepancy();
-			this.scss.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaDetected());
-			this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.weightDiscrepancyDetected(this.scss));
+			this.scSoftware.weightDiscrepancy();
+			this.scSoftware.notifyObservers(observer -> observer.weightDiscrepancyInBaggingAreaDetected());
+			this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.weightDiscrepancyDetected(this.scSoftware));
 			return;
 		}
 
@@ -257,7 +257,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 	private void acceptNewWeight(double weightInGrams) {
 		this.currentWeight = weightInGrams;
 		this.expectedWeight = 0.0;
-		this.scss.addItem(); // Go back to add item phase
+		this.scSoftware.addItem(); // Go back to add item phase
 	}
 
 	public void resetScale() {
@@ -269,15 +269,15 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 	public void overload(ElectronicScale scale) {
 		System.out.println("Scale overloaded");
 		this.scaleOverloaded = true;
-		this.scss.blockSystem();
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.scaleOverloadedDetected(this.scss));
+		this.scSoftware.blockSystem();
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.scaleOverloadedDetected(this.scSoftware));
 	}
 
 	@Override
 	public void outOfOverload(ElectronicScale scale) {
 		System.out.println("Scale out of overloaded");
 		this.scaleOverloaded = false;
-		this.scss.unblockSystem();
-		this.scss.getSupervisionSoftware().notifyObservers(observer -> observer.scaleOverloadedResolved(this.scss));
+		this.scSoftware.unblockSystem();
+		this.scSoftware.getSupervisionSoftware().notifyObservers(observer -> observer.scaleOverloadedResolved(this.scSoftware));
 	}
 }

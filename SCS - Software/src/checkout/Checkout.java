@@ -30,7 +30,7 @@ import user.Customer;
  * @author Yunfan Yang
  */
 public class Checkout {
-	private final SelfCheckoutSoftware scss;
+	private final SelfCheckoutSoftware scSoftware;
 	private final SelfCheckoutStation scStation;
 	private Customer customer;
 
@@ -38,9 +38,9 @@ public class Checkout {
 	// denomination of banknotes and coins
 	private List<Cash> pendingChanges = new ArrayList<Cash>();
 
-	public Checkout(SelfCheckoutSoftware scss) {
-		this.scss = scss;
-		this.scStation = this.scss.getSelfCheckoutStation();
+	public Checkout(SelfCheckoutSoftware scSoftware) {
+		this.scSoftware = scSoftware;
+		this.scStation = this.scSoftware.getSelfCheckoutStation();
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class Checkout {
 			throw new IllegalStateException("Customer has paid clear");
 		}
 
-		this.scss.cancelCheckout();
+		this.scSoftware.cancelCheckout();
 	}
 
 	private void enableBanknoteInput() {
@@ -145,7 +145,7 @@ public class Checkout {
 	 */
 	public void makeChange() {
 		// Dispense remaining pending change to customer
-		if (this.scss.getPhase() != Phase.PROCESSING_PAYMENT) {
+		if (this.scSoftware.getPhase() != Phase.PROCESSING_PAYMENT) {
 			throw new IllegalStateException("Cannot make change if it currently is not processing payment");
 		}
 
@@ -163,7 +163,7 @@ public class Checkout {
 
 		// If no pending changes, return
 		if (this.pendingChanges.isEmpty()) {
-			this.scss.paymentCompleted();
+			this.scSoftware.paymentCompleted();
 			return;
 		}
 
@@ -180,7 +180,7 @@ public class Checkout {
 				try {
 					this.scStation.banknoteDispensers.get(cash.value.intValue()).emit();
 					newPendingChanges.remove(cash);
-					this.scss.setBanknoteDangling(true);
+					this.scSoftware.setBanknoteDangling(true);
 				} catch (EmptyException | DisabledException | OverloadException e) {
 					continue;
 				}
@@ -188,7 +188,7 @@ public class Checkout {
 				try {
 					this.scStation.coinDispensers.get(cash.value).emit();
 					newPendingChanges.remove(cash);
-					this.scss.setCoinInTray(true);
+					this.scSoftware.setCoinInTray(true);
 				} catch (OverloadException | EmptyException | DisabledException e) {
 					continue;
 				}
@@ -200,15 +200,15 @@ public class Checkout {
 		// If size does not change, meaning no change is successfully emmited for
 		// customer, encounters error, notify attendant
 		if (size <= newPendingChanges.size()) {
-			this.scss.errorOccur();
-			this.scss.getSupervisionSoftware()
-					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scss));
+			this.scSoftware.errorOccur();
+			this.scSoftware.getSupervisionSoftware()
+					.notifyObservers(observer -> observer.dispenseChangeFailed(this.scSoftware));
 			return;
 		}
 
 		// If the last one is dispensed, to next phase
 		if (this.pendingChanges.isEmpty()) {
-			this.scss.paymentCompleted();
+			this.scSoftware.paymentCompleted();
 			return;
 		}
 	}
