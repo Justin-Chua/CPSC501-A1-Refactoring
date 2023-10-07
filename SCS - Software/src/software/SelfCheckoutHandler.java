@@ -20,9 +20,16 @@ public class SelfCheckoutHandler {
         this.processItemHandler = new ProcessItemHandler(scSoftware);
     }
     
+    public BanknoteHandler getBanknoteHandler() {
+    	return this.banknoteHandler;
+    }
     
     public CardHandler getCardHandler() {
     	return this.cardHandler;
+    }
+    
+    public CoinHandler getCoinHandler() {
+    	return this.coinHandler;
     }
     
     public ProcessItemHandler getProcessItemHandler() {
