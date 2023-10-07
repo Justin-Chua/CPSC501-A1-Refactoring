@@ -464,7 +464,7 @@ public class CheckoutTest
             scss.selectedPaymentMethod(PaymentMethod.CASH);
             System.out.println(customer.getCashBalance());
             System.out.println(customer.getCartSubtotal());
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
             
@@ -493,7 +493,7 @@ public class CheckoutTest
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
     
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
 
              BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
@@ -520,7 +520,7 @@ public class CheckoutTest
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
              
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
 
@@ -546,7 +546,7 @@ public class CheckoutTest
             scss.addItem();
             scss.checkout();
             scss.selectedPaymentMethod(PaymentMethod.CASH);
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
     
@@ -567,7 +567,7 @@ public class CheckoutTest
             scss.addItem();
             scss.checkout();
             scss.selectedPaymentMethod(PaymentMethod.CASH);
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
     
@@ -589,7 +589,7 @@ public class CheckoutTest
             scss.checkout();
             scss.selectedPaymentMethod(PaymentMethod.CASH);
             
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfCoinsInCoinDispenser();
     
@@ -616,7 +616,7 @@ public class CheckoutTest
             scss.addItem();
             scss.checkout();
             scss.selectedPaymentMethod(PaymentMethod.CASH);
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfBanknotesInBanknoteOutput();
     
@@ -645,7 +645,7 @@ public class CheckoutTest
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
 
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal sum = this.getSumOfBanknotesInBanknoteOutput();
     
@@ -675,7 +675,7 @@ public class CheckoutTest
              this.scss.checkout();
              this.scss.selectedPaymentMethod(PaymentMethod.CASH);
     
-             this.scss.makeChange();
+             this.scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal sum = this.getSumOfBanknotesInBanknoteOutput();
     
@@ -707,7 +707,7 @@ public class CheckoutTest
             this.scss.checkout();
             this.scss.selectedPaymentMethod(PaymentMethod.CASH);
     
-            this.scss.makeChange();
+            this.scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal sum = this.getSumOfBanknotesInBanknoteOutput();
     
@@ -735,7 +735,7 @@ public class CheckoutTest
             scss.checkout();
             scss.selectedPaymentMethod(PaymentMethod.CASH);
 
-            scss.makeChange();
+            scss.getSelfCheckoutController().getCheckout().makeChange();
     
             BigDecimal bs = this.getSumOfBanknotesInBanknoteOutput();
             BigDecimal cs = this.getSumOfCoinsInCoinDispenser();
@@ -767,7 +767,7 @@ public class CheckoutTest
              scss.addItem();
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal bs = this.getSumOfBanknotesInBanknoteOutput();
              BigDecimal cs = this.getSumOfCoinsInCoinDispenser();
@@ -800,7 +800,7 @@ public class CheckoutTest
              scss.addItem();
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal bs = this.getSumOfBanknotesInBanknoteOutput();
              BigDecimal cs = this.getSumOfCoinsInCoinDispenser();
@@ -836,7 +836,7 @@ public class CheckoutTest
             this.scss.checkout();
             this.scss.selectedPaymentMethod(PaymentMethod.CASH);
 
-            this.scss.makeChange();
+            this.scss.getSelfCheckoutController().getCheckout().makeChange();
 
     
             BigDecimal bs = this.getSumOfBanknotesInBanknoteOutput();
@@ -869,7 +869,7 @@ public class CheckoutTest
              scss.addItem();
              scss.checkout();
              scss.selectedPaymentMethod(PaymentMethod.CASH);
-             scss.makeChange();
+             scss.getSelfCheckoutController().getCheckout().makeChange();
     
              BigDecimal bs = this.getSumOfBanknotesInBanknoteOutput();
              BigDecimal cs = this.getSumOfCoinsInCoinDispenser();

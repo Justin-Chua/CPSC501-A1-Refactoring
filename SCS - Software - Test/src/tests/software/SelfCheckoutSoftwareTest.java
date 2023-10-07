@@ -123,7 +123,7 @@ public class SelfCheckoutSoftwareTest
     @Test(expected = IllegalStateException.class)
     public void makeChangeTest()
     {
-        selfCheckoutSoftware.makeChange();
+        selfCheckoutSoftware.getSelfCheckoutController().getCheckout().makeChange();
     }
 
     @Test

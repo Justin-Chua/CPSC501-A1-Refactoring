@@ -160,7 +160,7 @@ public class GUI {
 			try {
 				scs.getSelfCheckoutStation().banknoteInput.accept(new Banknote(Main.Configurations.currency, value));
 				if (scs.getCustomer().hasSufficientCashBalance()) {
-					scs.makeChange();
+					scs.getSelfCheckoutController().getCheckout().makeChange();
 				}
 			} catch (DisabledException e) {
 				e.printStackTrace();
@@ -203,10 +203,10 @@ public class GUI {
 			try {
 				scs.getSelfCheckoutStation().coinSlot.accept(new Coin(Main.Configurations.currency, value));
 				if (scs.getCustomer().hasSufficientCashBalance()) {
-					scs.makeChange();
+					scs.getSelfCheckoutController().getCheckout().makeChange();
 				}
 				if (scs.getCustomer().hasSufficientCashBalance()) {
-					scs.makeChange();
+					scs.getSelfCheckoutController().getCheckout().makeChange();
 				}
 			} catch (DisabledException e) {
 				e.printStackTrace();
