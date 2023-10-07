@@ -15,7 +15,8 @@ import org.junit.runners.Suite;
         // All tests under tests.interrupt
         tests.interrupt.BanknoteHandlerTest.class, tests.interrupt.CardHandlerTest.class, tests.interrupt.CoinHandlerTest.class, tests.interrupt.ProcessItemHandlerTest.class,
         // All tests under tests.software
-        tests.software.SelfCheckoutSoftwareTest.class, tests.software.SoftwareTest.class, tests.software.SupervisionSoftwareTest.class,
+        tests.software.SelfCheckoutSoftwareTest.class, tests.software.SoftwareTest.class, tests.software.SupervisionSoftwareTest.class, 
+        tests.software.SelfCheckoutControllerTest.class, tests.software.SelfCheckoutHandlerTest.class,
         // All tests under tests.store
         tests.store.GiftCardTest.class, tests.store.InventoryTest.class, tests.store.MembershipTest.class, tests.store.StoreTest.class,
         // All tests under tests.store.credentials
