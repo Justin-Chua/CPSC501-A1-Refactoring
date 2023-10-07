@@ -270,7 +270,7 @@ public class GUIObserver implements SelfCheckoutObserver, SupervisionObserver {
     }
 
     @Override
-    public Void productCannotFound() {
+    public Void productNotScannable() {
         // TODO Auto-generated method stub
         return null;
     }

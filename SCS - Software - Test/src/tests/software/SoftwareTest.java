@@ -175,7 +175,7 @@ public class SoftwareTest
             }
 
             @Override
-            public Void productCannotFound()
+            public Void productNotScannable()
             {
                 return null;
             }

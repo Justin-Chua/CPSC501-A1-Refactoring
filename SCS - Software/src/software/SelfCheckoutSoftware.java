@@ -227,11 +227,6 @@ public class SelfCheckoutSoftware extends Software <SelfCheckoutObserver>
         this.notifyObservers(observer -> observer.touchScreenUnblocked());
     }
 
-    public void makeChange()
-    {
-        this.scController.getCheckout().makeChange();
-    }
-
     // ========== PHASE MANAGEMENT ========== //
 
     /**

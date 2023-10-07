@@ -73,7 +73,7 @@ public interface SelfCheckoutObserver extends Observer {
     // Phase
     public Void phaseChanged(Phase phase);
 
-	public Void productCannotFound();
+	public Void productNotScannable();
 
     
 }

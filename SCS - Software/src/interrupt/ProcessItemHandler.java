@@ -127,7 +127,7 @@ public class ProcessItemHandler extends Handler implements BarcodeScannerObserve
 		Product product = Inventory.getProduct(barcode);
 
 		if (product == null) {
-			this.scSoftware.notifyObservers(observer -> observer.productCannotFound());
+			this.scSoftware.notifyObservers(observer -> observer.productNotScannable());
 			return;
 		}
 
